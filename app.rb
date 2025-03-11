@@ -53,15 +53,19 @@ class TwitchAPI
 end
 
 # routes
+# ref: sinatra/cross_origin for the future
 get '/' do
+  headers 'Access-Control-Allow-Origin' => '*'
   'vellicare OK'.to_json
 end
 
 get '/:username' do
+  headers 'Access-Control-Allow-Origin' => '*'
   TwitchAPI.user(username: params['username']).to_json
 end
 
 get '/:username/badges' do
+  headers 'Access-Control-Allow-Origin' => '*'
   TwitchAPI.badges(username: params['username']).to_json
 end
 
