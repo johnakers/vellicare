@@ -1,10 +1,11 @@
-require 'dotenv/load'
+# require 'dotenv/load'
 require 'sinatra'
 require 'twitch-api'
 require 'httparty'
 
-require 'pry'
+# require 'pry'
 
+# api
 class TwitchAPI
   CLIENT_ID = ENV['TWITCH_CLIENT_ID'].freeze
   CLIENT_SECRET = ENV['TWITCH_CLIENT_SECRET'].freeze
@@ -52,14 +53,16 @@ class TwitchAPI
 end
 
 # routes
-get '/' do
-  'vellicare OK'.to_json
-end
+class Vellicare < Sinatra::Base
+  get '/' do
+    'vellicare OK'.to_json
+  end
 
-get '/:username' do
-  TwitchAPI.user(username: params['username']).to_json
-end
+  get '/:username' do
+    TwitchAPI.user(username: params['username']).to_json
+  end
 
-get '/:username/badges' do
-  TwitchAPI.badges(username: params['username']).to_json
+  get '/:username/badges' do
+    TwitchAPI.badges(username: params['username']).to_json
+  end
 end
