@@ -53,16 +53,18 @@ class TwitchAPI
 end
 
 # routes
-class Vellicare < Sinatra::Base
-  get '/' do
-    'vellicare OK'.to_json
-  end
+get '/' do
+  'vellicare OK'.to_json
+end
 
-  get '/:username' do
-    TwitchAPI.user(username: params['username']).to_json
-  end
+get '/:username' do
+  TwitchAPI.user(username: params['username']).to_json
+end
 
-  get '/:username/badges' do
-    TwitchAPI.badges(username: params['username']).to_json
-  end
+get '/:username/badges' do
+  TwitchAPI.badges(username: params['username']).to_json
+end
+
+not_found do
+  p "Hmmm... can't find that"
 end
