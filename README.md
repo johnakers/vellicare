@@ -5,9 +5,11 @@ A small [TwitchAPI](https://dev.twitch.tv/docs/) microservice that services [Loq
 ### Endpoints
 
 ```
-GET /:username
-GET /:username/badges
-GET /:username/emotes
+GET /global/badges
+GET /global/emotes
+GET /user/:username
+GET /user/:username/badges
+GET /user/:username/emotes
 ```
 
 ### Notes

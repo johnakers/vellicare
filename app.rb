@@ -1,3 +1,4 @@
+# # for development only
 # require 'dotenv/load'
 # require 'pry'
 
@@ -75,22 +76,52 @@ class TwitchAPI
       }
     )
   end
+
+  def global_emotes
+    HTTParty.get(
+      'https://api.twitch.tv/helix/chat/emotes/global',
+      headers: {
+        'Authorization' => "Bearer #{client.tokens.access_token}",
+        'Client-Id' => CLIENT_ID
+      }
+    )
+  end
+
+  def global_badges
+    HTTParty.get(
+      'https://api.twitch.tv/helix/chat/badges/global',
+      headers: {
+        'Authorization' => "Bearer #{client.tokens.access_token}",
+        'Client-Id' => CLIENT_ID
+      }
+    )
+  end
 end
 
 # routes
-get '/:username' do
+get '/global/emotes' do
   headers "Access-Control-Allow-Origin" => "*"
-  TwitchAPI.new.user(username: params['username']).to_json
+  TwitchAPI.new.global_emotes.to_json
 end
 
-get '/:username/badges' do
+get '/global/badges' do
+  headers "Access-Control-Allow-Origin" => "*"
+  TwitchAPI.new.global_badges.to_json
+end
+
+get '/user/:username/badges' do
   headers "Access-Control-Allow-Origin" => "*"
   TwitchAPI.new.badges(username: params['username']).to_json
 end
 
-get '/:username/emotes' do
+get '/user/:username/emotes' do
   headers "Access-Control-Allow-Origin" => "*"
   TwitchAPI.new.emotes(username: params['username']).to_json
+end
+
+get '/user/:username' do
+  headers "Access-Control-Allow-Origin" => "*"
+  TwitchAPI.new.user(username: params['username']).to_json
 end
 
 get '/' do
