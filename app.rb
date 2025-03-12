@@ -63,6 +63,18 @@ class TwitchAPI
       }
     )
   end
+
+  def emotes(username:)
+    broadcaster_id = user(username:)[:id]
+
+    HTTParty.get(
+      "https://api.twitch.tv/helix/chat/emotes?broadcaster_id=#{broadcaster_id}",
+      headers: {
+        'Authorization' => "Bearer #{client.tokens.access_token}",
+        'Client-Id' => CLIENT_ID
+      }
+    )
+  end
 end
 
 # routes
@@ -78,8 +90,7 @@ end
 
 get '/:username/emotes' do
   headers "Access-Control-Allow-Origin" => "*"
-  # Not Implemented... yet
-  204
+  TwitchAPI.new.emotes(username: params['username']).to_json
 end
 
 get '/' do
