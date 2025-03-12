@@ -2,9 +2,21 @@
 # require 'pry'
 
 require 'sinatra'
+require 'sinatra/cross_origin'
 require 'twitch-api'
 require 'httparty'
 
+# cors
+configure do
+  enable :cross_origin
+end
+
+options "*" do
+  response.headers['Allow'] = 'HEAD,GET,PUT,POST,DELETE,OPTIONS'
+  response.headers['Access-Control-Allow-Headers'] = 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Cache-Control, Accept'
+
+  200
+end
 
 # api
 class TwitchAPI
@@ -54,22 +66,27 @@ class TwitchAPI
 end
 
 # routes
-# ref: sinatra/cross_origin for the future
-get '/' do
-  headers 'Access-Control-Allow-Origin' => '*'
-  'vellicare OK'.to_json
-end
-
 get '/:username' do
-  headers 'Access-Control-Allow-Origin' => '*'
+  headers "Access-Control-Allow-Origin" => "*"
   TwitchAPI.new.user(username: params['username']).to_json
 end
 
 get '/:username/badges' do
-  headers 'Access-Control-Allow-Origin' => '*'
+  headers "Access-Control-Allow-Origin" => "*"
   TwitchAPI.new.badges(username: params['username']).to_json
 end
 
+get '/:username/emotes' do
+  headers "Access-Control-Allow-Origin" => "*"
+  # Not Implemented... yet
+  204
+end
+
+get '/' do
+  headers "Access-Control-Allow-Origin" => "*"
+  { vellicare: 'OK' }.to_json
+end
+
 not_found do
-  p "Hmmm... can't find that"
+  404
 end
