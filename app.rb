@@ -1,16 +1,19 @@
 # require 'dotenv/load'
+# require 'pry'
+
 require 'sinatra'
 require 'twitch-api'
 require 'httparty'
 
-# require 'pry'
 
 # api
 class TwitchAPI
   CLIENT_ID = ENV['TWITCH_CLIENT_ID'].freeze
   CLIENT_SECRET = ENV['TWITCH_CLIENT_SECRET'].freeze
 
-  def self.client
+  attr_reader :client
+
+  def initialize
     tokens = TwitchOAuth2::Tokens.new(
       client: {
         client_id: CLIENT_ID,
@@ -18,12 +21,11 @@ class TwitchAPI
       }
     )
 
-    Twitch::Client.new(tokens:)
+    @client = Twitch::Client.new(tokens:)
   end
 
-  def self.user(username:)
-    twitch_client = TwitchAPI.client
-    data = twitch_client.get_users({ login: username }).data.first
+  def user(username:)
+    data = client.get_users({ login: username }).data.first
 
     {
       id: data.id,
@@ -38,14 +40,13 @@ class TwitchAPI
     }
   end
 
-  def self.badges(username:)
+  def badges(username:)
     broadcaster_id = user(username:)[:id]
-    twitch_client = client
 
     HTTParty.get(
       "https://api.twitch.tv/helix/chat/badges?broadcaster_id=#{broadcaster_id}",
       headers: {
-        'Authorization' => "Bearer #{twitch_client.tokens.access_token}",
+        'Authorization' => "Bearer #{client.tokens.access_token}",
         'Client-Id' => CLIENT_ID
       }
     )
@@ -61,12 +62,12 @@ end
 
 get '/:username' do
   headers 'Access-Control-Allow-Origin' => '*'
-  TwitchAPI.user(username: params['username']).to_json
+  TwitchAPI.new.user(username: params['username']).to_json
 end
 
 get '/:username/badges' do
   headers 'Access-Control-Allow-Origin' => '*'
-  TwitchAPI.badges(username: params['username']).to_json
+  TwitchAPI.new.badges(username: params['username']).to_json
 end
 
 not_found do
